@@ -32,7 +32,7 @@
                 <include name="**/play.static"/>
             </fileset>
         </copy>
-        <jar destfile="lib/webdrive-0.1.jar" basedir="tmp/classes">
+        <jar destfile="lib/webdrive-0.2.jar" basedir="tmp/classes">
             <manifest>
                 <section name="Play-module">
                     <attribute name="Specification-Title" value="webdrive"/>

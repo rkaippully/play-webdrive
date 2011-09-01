@@ -1,4 +1,4 @@
-self: play -> webdrive 0.1
+self: play -> webdrive 0.2
 
 require:
     - play

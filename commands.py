@@ -94,8 +94,8 @@ def test(app, args):
     print "~"
 
     wdcp = app.getClasspath()
-    wdcp.append(os.path.join(app.play_env["basedir"], 'modules/webdrive-0.1/lib/play-webdrive-0.1.jar'))
-    wdcp_libs = os.path.join(app.play_env["basedir"], 'modules/webdrive-0.1/deps')
+    wdcp.append(os.path.join(app.play_env["basedir"], 'modules/webdrive-0.2/lib/play-webdrive-0.2.jar'))
+    wdcp_libs = os.path.join(app.play_env["basedir"], 'modules/webdrive-0.2/deps')
     for jar in os.listdir(wdcp_libs):
         if jar.endswith('.jar'):
            wdcp.append(os.path.normpath(os.path.join(wdcp_libs, jar)))

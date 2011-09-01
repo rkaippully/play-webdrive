@@ -27,7 +27,6 @@ import java.util.List;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-import org.openqa.selenium.ie.InternetExplorerDriver;
 
 public class WebDriverRunner {
 
@@ -118,7 +117,8 @@ public class WebDriverRunner {
 	}
 
 	private void run() throws Exception {
-        List<Class<?>> driverClasses = getDriverClasses();
+		DriverManager manager = new DriverManager();
+        List<Class<?>> driverClasses = manager.getDriverClasses();
 
         /* Run non-selenium tests */
     	runTestsWithDriver(HtmlUnitDriver.class, nonSeleniumTests);
@@ -132,28 +132,6 @@ public class WebDriverRunner {
 				+ (failed ? "failed" : "passed"));
         resultFile.createNewFile();
     }
-
-	/**
-	 * Returns the list of all {@link WebDriver} classes to run tests.
-	 */
-	private List<Class<?>> getDriverClasses() throws Exception {
-		List<Class<?>> drivers = new ArrayList<Class<?>>();
-		String driversProp = System.getProperty("webdrive.classes");
-		if (driversProp == null || driversProp.trim().isEmpty()) {
-			return drivers;
-		}
-
-		for (String driver : driversProp.split(",")) {
-			/* Skip IE if we are not on windows */
-			Class<?> clazz = Class.forName(driver);
-			if (InternetExplorerDriver.class.equals(clazz) &&
-				!System.getProperty("os.name").startsWith("Windows")) {
-				continue;
-			}
-			drivers.add(clazz);
-		}
-		return drivers;
-	}
 
 	private void runTestsWithDriver(Class<?> webDriverClass, List<String> tests)
 			throws Exception {
