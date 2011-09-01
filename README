@@ -1,0 +1,36 @@
+
+WebDrive - Selenium 2 WebDriver support for play framework
+==========================================================
+WebDrive module provides Selenium 2 testing support for Play framework. You can use this
+module to test your application with any browsers supported by Selenium WebDriver.
+
+Usage
+=====
+1. Install the module by unzipping webdrive-<version>.zip to
+   ${play.path}/modules/webdrive-<version>.
+2. Add the below line to your dependencies.yml:
+
+      - play -> webdrive 0.1
+
+3. Add the below line to your application.conf:
+
+      webdrive.classes=org.openqa.selenium.ie.InternetExplorerDriver,org.openqa.selenium.firefox.FirefoxDriver
+
+   Of course, you can choose whichever drivers you prefer to have. See
+   http://seleniumhq.org/docs/03_webdriver.html for a list of available drivers.
+
+4. Run your tests with:
+
+      play webdrive:test
+
+   Non-selenium tests will be executed using HtmlUnitDriver. Selenium tests will be
+   executed using the drivers mentioned in application.conf
+
+License
+=======
+WebDrive is licensed under Apache License version 2.0.
+
+Support
+=======
+This is a beta release. Please report any issues at
+https://github.com/rkaippully/play-webdrive.
