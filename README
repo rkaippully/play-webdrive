@@ -6,31 +6,7 @@ module to test your application with any browsers supported by Selenium WebDrive
 
 Usage
 =====
-1. Install the module by unzipping webdrive-<version>.zip to
-   ${play.path}/modules/webdrive-<version>.
-2. Add the below line to your dependencies.yml:
-
-      - play -> webdrive <version>
-
-   Run 'play dependencies --sync' after adding this line.
-
-3. Add the below line to your application.conf:
-
-      webdrive.classes=org.openqa.selenium.ie.InternetExplorerDriver,org.openqa.selenium.firefox.FirefoxDriver
-
-   Of course, you can choose whichever drivers you prefer to have. See
-   http://seleniumhq.org/docs/03_webdriver.html for a list of available drivers.
-
-   You can also use shorter names for most of the drivers:
-   
-      webdrive.classes=htmlunit,android,chrome,firefox,ie,iphone
-
-4. Run your tests with:
-
-      play webdrive:test
-
-   Non-selenium tests will be executed using HtmlUnitDriver. Selenium tests will be
-   executed using the drivers mentioned in application.conf
+See documentation/manual/home.textile for documentation.
 
 License
 =======

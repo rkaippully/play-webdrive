@@ -37,14 +37,13 @@ bc. webdrive.classes=ie,chrome,firefox
 
 Below is a list of all supported driver names:
 
-table{border-collapse: collapse;}.
-|{border: 1px solid black; padding: 5px;}_. Name   |{border: 1px solid black; padding: 5px;}_. WebDriver class                             |
-|{border: 1px solid black; padding: 5px;} htmlunit |{border: 1px solid black; padding: 5px;} org.openqa.selenium.htmlunit.HtmlUnitDriver   |
-|{border: 1px solid black; padding: 5px;} andriod  |{border: 1px solid black; padding: 5px;} org.openqa.selenium.android.AndroidDriver     |
-|{border: 1px solid black; padding: 5px;} chrome   |{border: 1px solid black; padding: 5px;} org.openqa.selenium.chrome.ChromeDriver       |
-|{border: 1px solid black; padding: 5px;} firefox  |{border: 1px solid black; padding: 5px;} org.openqa.selenium.firefox.FirefoxDriver     |
-|{border: 1px solid black; padding: 5px;} ie       |{border: 1px solid black; padding: 5px;} org.openqa.selenium.ie.InternetExplorerDriver |
-|{border: 1px solid black; padding: 5px;} iphone   |{border: 1px solid black; padding: 5px;} org.openqa.selenium.iphone.IPhoneDriver       |
+|_. Name   |_. WebDriver class                             |
+| htmlunit | org.openqa.selenium.htmlunit.HtmlUnitDriver   |
+| andriod  | org.openqa.selenium.android.AndroidDriver     |
+| chrome   | org.openqa.selenium.chrome.ChromeDriver       |
+| firefox  | org.openqa.selenium.firefox.FirefoxDriver     |
+| ie       | org.openqa.selenium.ie.InternetExplorerDriver |
+| iphone   | org.openqa.selenium.iphone.IPhoneDriver       |
 
 You can use the fully qualified class name instead of the simple names if you wish.
 
