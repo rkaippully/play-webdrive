@@ -1,0 +1,66 @@
+h1. WebDrive - Selenium 2 WebDriver support for Play framework
+
+_Written by Raghu Kaippully_
+
+p. WebDrive module provides Selenium 2 testing support for Play framework. You can use this module to test your application with any browsers supported by "Selenium WebDriver":http://seleniumhq.org/docs/03_webdriver.html.
+
+h2. Motivation
+
+p. Play framework lets you write tests with Selenium. The tests can be automatically run with the @play auto-test@ command. The selenium tests are run using "HtmlUnit":http://htmlunit.sourceforge.net/. While this works great for simple web pages it may not be suited for all - especially with complex JavaScript. Besides, you may want to test the pages using multiple browsers.
+
+p. WebDrive lets you run your existing selenium tests on browsers of your choice. You save selenium tests under the @tests@ directory with a @.test.html@ extension as mentioned in Play documentation. WebDrive can run these tests on any of the supported browsers.
+
+h2. Installation
+
+
+* Use the standard Play module installation command:
+
+bc. play install webdrive 0.2
+
+* Add the dependency to your project:
+
+bc. require:
+    - play -> webdrive 0.2:
+        transitive: false
+
+WebDrive has a lot of dependencies and we don't want those jars to be copied over to the application's lib directory. That is why we specified @transitive: false@.
+
+* Run
+
+bc. play dependencies --sync
+
+h2. Usage
+
+In @application.conf@ you mention the list of browsers to run tests on:
+
+bc. webdrive.classes=ie,chrome,firefox
+
+Below is a list of all supported driver names:
+
+table{border-collapse: collapse;}.
+|{border: 1px solid black; padding: 5px;}_. Name   |{border: 1px solid black; padding: 5px;}_. WebDriver class                             |
+|{border: 1px solid black; padding: 5px;} htmlunit |{border: 1px solid black; padding: 5px;} org.openqa.selenium.htmlunit.HtmlUnitDriver   |
+|{border: 1px solid black; padding: 5px;} andriod  |{border: 1px solid black; padding: 5px;} org.openqa.selenium.android.AndroidDriver     |
+|{border: 1px solid black; padding: 5px;} chrome   |{border: 1px solid black; padding: 5px;} org.openqa.selenium.chrome.ChromeDriver       |
+|{border: 1px solid black; padding: 5px;} firefox  |{border: 1px solid black; padding: 5px;} org.openqa.selenium.firefox.FirefoxDriver     |
+|{border: 1px solid black; padding: 5px;} ie       |{border: 1px solid black; padding: 5px;} org.openqa.selenium.ie.InternetExplorerDriver |
+|{border: 1px solid black; padding: 5px;} iphone   |{border: 1px solid black; padding: 5px;} org.openqa.selenium.iphone.IPhoneDriver       |
+
+You can use the fully qualified class name instead of the simple names if you wish.
+
+Optionally, you may also specify number of seconds WebDrive waits for each test before marking it as @ERROR@:
+
+bc. webdrive.timeout=300
+
+If you do not specify any value WebDrive uses a default value of 120 seconds.
+
+Tests are run using the command:
+
+bc. play webdrive:test
+
+Test results are available under @test-result@ folder. Results for each browser driver will be stored in separate folders inside @test-result@. If a test fails, a file named @result.failed@ will be created in the folder for that driver and also in @test-result@ folder. If all tests pass, a file named @result.passed@ will be created instead. You can also check the return code of the command to check whether the tests ran successfully.
+
+h2. Project Information
+
+Source code: "https://github.com/rkaippully/play-webdrive":https://github.com/rkaippully/play-webdrive
+Issue tracking: "https://github.com/rkaippully/play-webdrive/issues":https://github.com/rkaippully/play-webdrive/issues

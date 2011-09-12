@@ -35,8 +35,16 @@ public class WebDriverRunner {
 	 */
 	private static final String DEFAULT_APP_URL = "http://localhost:9000";
 
+	/**
+	 * Default timeout value for each test.
+	 */
+	private static final String DEFAULT_TEST_TIMEOUT = "120";
+
 	public static void main(String[] args) throws Exception {
-    	new WebDriverRunner().run();
+    	if (new WebDriverRunner().run())
+    		System.exit(0);
+    	else
+    		System.exit(1);
     }
 
     /**
@@ -53,6 +61,11 @@ public class WebDriverRunner {
 	 * URL of the play application to test
 	 */
 	private String appUrlBase;
+
+	/**
+	 * The maximum time we give for each test to complete.
+	 */
+	private int testTimeoutInSeconds;
 
 	/**
 	 * URL part for selenium test runner
@@ -72,6 +85,19 @@ public class WebDriverRunner {
 
 	public WebDriverRunner() {
 		this.appUrlBase = System.getProperty("application.url", DEFAULT_APP_URL);
+		String timeoutStr = System.getProperty("webdrive.timeout", DEFAULT_TEST_TIMEOUT);
+		try {
+			if (timeoutStr == null || timeoutStr.trim().equals(""))
+				timeoutStr = DEFAULT_TEST_TIMEOUT;
+			this.testTimeoutInSeconds = Integer.parseInt(timeoutStr);
+			System.out.println("~ Using a timeout value of "
+					+ this.testTimeoutInSeconds + " seconds");
+		} catch (NumberFormatException e) {
+			System.out.println("~ The timeout value " + timeoutStr
+					+ " is not a " + "number. Setting to default value "
+					+ DEFAULT_TEST_TIMEOUT + " seconds");
+            this.testTimeoutInSeconds = Integer.parseInt(DEFAULT_TEST_TIMEOUT);
+		}
 		retrieveTestsList();
 	}
 
@@ -116,7 +142,7 @@ public class WebDriverRunner {
         }
 	}
 
-	private void run() throws Exception {
+	private boolean run() throws Exception {
 		DriverManager manager = new DriverManager();
         List<Class<?>> driverClasses = manager.getDriverClasses();
 
@@ -131,6 +157,8 @@ public class WebDriverRunner {
 		File resultFile = new File(testResultRoot, "result."
 				+ (failed ? "failed" : "passed"));
         resultFile.createNewFile();
+
+        return !failed;
     }
 
 	private void runTestsWithDriver(Class<?> webDriverClass, List<String> tests)
@@ -153,25 +181,26 @@ public class WebDriverRunner {
             if (test.endsWith(".class")) {
                 url = appUrlBase + "/@tests/" + test;
             } else {
-				url = appUrlBase + "" + seleniumUrlPart + "?baseUrl="
+				url = appUrlBase + seleniumUrlPart + "?baseUrl="
 						+ appUrlBase + "&test=/@tests/" + test
 						+ ".suite&auto=true&resultsUrl=/@tests/" + test;
             }
             webDriver.get(url);
             int retry = 0;
-            while(retry < 5) {
+            while(retry < testTimeoutInSeconds) {
 				if (new File(testResultRoot, test.replace("/", ".")
 						+ ".passed.html").exists()) {
-                    System.out.print("PASSED     ");
+                    System.out.print("PASSED      ");
                     break;
 				} else if (new File(testResultRoot, test.replace("/", ".")
 						+ ".failed.html").exists()) {
-                    System.out.print("FAILED  !  ");
+                    System.out.print("FAILED   !  ");
                     ok = false;
                     break;
                 } else {
-                    if(retry++ == 4) {
-                        System.out.print("ERROR   ?  ");
+                	retry++;
+                    if(retry == testTimeoutInSeconds) {
+                        System.out.print("TIMEOUT  ?  ");
                         ok = false;
                         break;
                     } else {
