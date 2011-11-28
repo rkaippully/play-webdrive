@@ -1,4 +1,4 @@
-self: play -> webdrive 0.2
+self: play -> webdrive 0.2-wds-v1
 
 require:
     - play
