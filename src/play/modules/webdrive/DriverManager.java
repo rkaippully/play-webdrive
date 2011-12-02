@@ -47,6 +47,19 @@ public class DriverManager {
 		simpleDriverNames.put("ie", InternetExplorerDriver.class);
 		simpleDriverNames.put("iphone", IPhoneDriver.class);
 	}
+	
+	public List<String> getDriverNames() {
+		List<String> drivers = new ArrayList<String>();
+		String driversProp = System.getProperty("webdrive.classes");
+		if (driversProp == null || driversProp.trim().isEmpty()) {
+			return drivers;
+		}
+		
+		for (String driver : driversProp.split(",")) {
+			drivers.add(driver);
+		}
+		return drivers;
+	}
 
 	/**
 	 * Returns the list of all {@link WebDriver} classes to run tests.

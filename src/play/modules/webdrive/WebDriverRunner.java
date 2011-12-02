@@ -20,13 +20,22 @@ package play.modules.webdrive;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.InetAddress;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import org.openqa.selenium.SeleneseCommandExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.remote.CommandExecutor;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
+
+import play.Play;
 
 public class WebDriverRunner {
 
@@ -41,11 +50,24 @@ public class WebDriverRunner {
 	private static final String DEFAULT_TEST_TIMEOUT = "120";
 
 	public static void main(String[] args) throws Exception {
-    	if (new WebDriverRunner().run())
+		
+		remoteMode = System.getProperty("webdrive.remoteUrl") != null;
+		
+    	if (new WebDriverRunner().runDecider(remoteMode))
     		System.exit(0);
     	else
     		System.exit(1);
     }
+	
+	private boolean runDecider(boolean remoteMode) throws Exception {
+		if (remoteMode) {
+			return runRemote();
+		} else {
+			return run();
+		}
+	}
+
+	private static boolean remoteMode;
 
     /**
      * The "test-result" directory.
@@ -160,12 +182,50 @@ public class WebDriverRunner {
 
         return !failed;
     }
+	
+	private boolean runRemote() throws Exception {
+		/* Run non-selenium tests */
+		runTestsWithDriver(HtmlUnitDriver.class, nonSeleniumTests);
+
+		
+		String thisHost = InetAddress.getLocalHost().getHostName();
+		appUrlBase = "http://"+thisHost+":9000";
+
+		DriverManager manager = new DriverManager();
+        List<String> driverNames = manager.getDriverNames();
+        
+        for (String driver : driverNames) {
+        	DesiredCapabilities capabilities = new DesiredCapabilities();
+        	capabilities.setBrowserName(driver);
+        	CommandExecutor executor = new SeleneseCommandExecutor(new URL(System.getProperty("webdrive.remoteUrl")), new URL(appUrlBase + "/@tests/init"), capabilities);
+        	WebDriver webDriver = new RemoteWebDriver(executor, capabilities);
+
+        	System.out.println("~ Starting tests remotely with " + capabilities.getBrowserName());   
+        	
+        	/* Run selenium tests on all browsers */
+        	runTests(seleniumTests, webDriver);
+			
+		}
+		
+		File resultFile = new File(testResultRoot, "result."
+				+ (failed ? "failed" : "passed"));
+        resultFile.createNewFile();
+
+        return !failed;
+	}
+	
+	
 
 	private void runTestsWithDriver(Class<?> webDriverClass, List<String> tests)
 			throws Exception {
         System.out.println("~ Starting tests with " + webDriverClass);        	
     	WebDriver webDriver = (WebDriver) webDriverClass.newInstance();
-    	webDriver.get(appUrlBase + "/@tests/init");
+    	runTests(tests, webDriver);
+	}
+
+	private void runTests(List<String> tests, WebDriver webDriver)
+			throws InterruptedException {
+		webDriver.get(appUrlBase + "/@tests/init");
         boolean ok = true;
         for (String test : tests) {
             long start = System.currentTimeMillis();

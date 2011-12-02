@@ -1,5 +1,5 @@
-self: play -> webdrive 0.2-wds-v1
+self: play -> webdrive 0.2-wds-v2
 
 require:
     - play
-    - org.seleniumhq.selenium -> selenium-java 2.13.0
+    - org.seleniumhq.selenium -> selenium-java 2.14.0
