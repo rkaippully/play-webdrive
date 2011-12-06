@@ -166,10 +166,10 @@ public class WebDriverRunner {
 
 	private boolean run() throws Exception {
 		DriverManager manager = new DriverManager();
-        List<Class<?>> driverClasses = manager.getDriverClasses();
+        List<Class<?>> driverClasses = manager.getLocalDriverClasses();
 
         /* Run non-selenium tests */
-    	runTestsWithDriver(HtmlUnitDriver.class, nonSeleniumTests);
+        runTestsWithDriver(HtmlUnitDriver.class, nonSeleniumTests);
 
     	/* Run selenium tests on all browsers */
     	for (Class<?> driverClass : driverClasses) {
@@ -185,18 +185,21 @@ public class WebDriverRunner {
 	
 	private boolean runRemote() throws Exception {
 		/* Run non-selenium tests */
-		runTestsWithDriver(HtmlUnitDriver.class, nonSeleniumTests);
+//		runTestsWithDriver(HtmlUnitDriver.class, nonSeleniumTests);
 
 		
 		String thisHost = InetAddress.getLocalHost().getHostName();
 		appUrlBase = "http://"+thisHost+":9000";
+		
+		System.out.println("&&&&& - Going to pass this to remote node to connect back to me: " + appUrlBase);
 
 		DriverManager manager = new DriverManager();
-        List<String> driverNames = manager.getDriverNames();
+        List<String> driverNames = manager.getRemoteDriverNames();
         
         for (String driver : driverNames) {
         	DesiredCapabilities capabilities = new DesiredCapabilities();
         	capabilities.setBrowserName(driver);
+        	
         	CommandExecutor executor = new SeleneseCommandExecutor(new URL(System.getProperty("webdrive.remoteUrl")), new URL(appUrlBase + "/@tests/init"), capabilities);
         	WebDriver webDriver = new RemoteWebDriver(executor, capabilities);
 

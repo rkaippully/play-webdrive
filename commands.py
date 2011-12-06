@@ -110,6 +110,7 @@ def test(app, args, remote):
     	
     if (remote) :
         java_cmd += ['-Dwebdrive.remoteUrl=%s' % app.readConf('webdrive.remoteUrl'),]
+        java_cmd += ['-Dwebdrive.remote.browsers=%s' % app.readConf('webdrive.remote.browsers'),]
     
     java_cmd += ['play.modules.webdrive.WebDriverRunner',]
 

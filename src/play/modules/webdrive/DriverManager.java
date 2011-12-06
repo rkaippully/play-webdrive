@@ -48,9 +48,9 @@ public class DriverManager {
 		simpleDriverNames.put("iphone", IPhoneDriver.class);
 	}
 	
-	public List<String> getDriverNames() {
+	public List<String> getRemoteDriverNames() {
 		List<String> drivers = new ArrayList<String>();
-		String driversProp = System.getProperty("webdrive.classes");
+		String driversProp = System.getProperty("webdrive.remote.browsers");
 		if (driversProp == null || driversProp.trim().isEmpty()) {
 			return drivers;
 		}
@@ -64,7 +64,7 @@ public class DriverManager {
 	/**
 	 * Returns the list of all {@link WebDriver} classes to run tests.
 	 */
-	public List<Class<?>> getDriverClasses() {
+	public List<Class<?>> getLocalDriverClasses() {
 		List<Class<?>> drivers = new ArrayList<Class<?>>();
 		String driversProp = System.getProperty("webdrive.classes");
 		if (driversProp == null || driversProp.trim().isEmpty()) {
