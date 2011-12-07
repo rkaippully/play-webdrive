@@ -187,7 +187,6 @@ public class WebDriverRunner {
 		/* Run non-selenium tests */
 //		runTestsWithDriver(HtmlUnitDriver.class, nonSeleniumTests);
 
-		
 		String thisHost = InetAddress.getLocalHost().getHostName();
 		appUrlBase = "http://"+thisHost+":9000";
 		
@@ -286,9 +285,25 @@ public class WebDriverRunner {
         webDriver.get(appUrlBase + "/@tests/end?result=" + (ok ? "passed" : "failed"));
         webDriver.quit();
         
-        saveTestResults(webDriver.getClass().getSimpleName());
+        saveTestResults(constructNiceBrowserName(webDriver));
         if (!ok)
         	failed = true;
+	}
+
+	private String constructNiceBrowserName(WebDriver webDriver) {
+		return webDriverIsRemote(webDriver) ? constructRemoteName(webDriver) : constructLocalName(webDriver);
+	}
+
+	private String constructLocalName(WebDriver webDriver) {
+		return "Local-" + webDriver.getClass().getSimpleName();
+	}
+
+	private String constructRemoteName(WebDriver webDriver) {
+		return "Remote-" + ((RemoteWebDriver)webDriver).getCapabilities().getBrowserName();
+	}
+
+	private boolean webDriverIsRemote(WebDriver webDriver) {
+		return webDriver.getClass().getSimpleName().equalsIgnoreCase(RemoteWebDriver.class.getSimpleName());
 	}
 
 	/**
