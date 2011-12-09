@@ -48,15 +48,15 @@ public class DriverManager {
 		simpleDriverNames.put("iphone", IPhoneDriver.class);
 	}
 	
-	public List<String> getRemoteDriverNames() {
-		List<String> drivers = new ArrayList<String>();
+	public List<Driver> getRemoteDriverNames() {
+		List<Driver> drivers = new ArrayList<Driver>();
 		String driversProp = System.getProperty("webdrive.remote.browsers");
 		if (driversProp == null || driversProp.trim().isEmpty()) {
 			return drivers;
 		}
 		
-		for (String driver : driversProp.split(",")) {
-			drivers.add(driver);
+		for (String rawDriver : driversProp.split(",")) {
+			drivers.add(new Driver(rawDriver.split(":")));
 		}
 		return drivers;
 	}

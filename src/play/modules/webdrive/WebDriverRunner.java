@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.openqa.selenium.Platform;
 import org.openqa.selenium.SeleneseCommandExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
@@ -184,30 +185,33 @@ public class WebDriverRunner {
     }
 	
 	private boolean runRemote() throws Exception {
-		/* Run non-selenium tests */
 //		runTestsWithDriver(HtmlUnitDriver.class, nonSeleniumTests);
 
 		String thisHost = System.getProperty("webdrive.this.ipAddress");
 		String thisPort = System.getProperty("webdrive.this.port", "9000");
 		appUrlBase = "http://"+thisHost+":"+thisPort;
 		
-		System.out.println("&&&&& - Going to pass this to remote node to connect back to me: " + appUrlBase);
+		System.out.println("~ Going to pass this to remote node to connect back to me: " + appUrlBase);
 
 		DriverManager manager = new DriverManager();
-        List<String> driverNames = manager.getRemoteDriverNames();
+        List<Driver> drivers = manager.getRemoteDriverNames();
         
-        for (String driver : driverNames) {
+        for (Driver driver : drivers) {
         	DesiredCapabilities capabilities = new DesiredCapabilities();
-        	capabilities.setBrowserName(driver);
-        	
-        	CommandExecutor executor = new SeleneseCommandExecutor(new URL(System.getProperty("webdrive.remoteUrl")), new URL(appUrlBase + "/@tests/init"), capabilities);
-        	WebDriver webDriver = new RemoteWebDriver(executor, capabilities);
+        	capabilities.setBrowserName(driver.name);
 
-        	System.out.println("~ Starting tests remotely with " + capabilities.getBrowserName());   
+        	if (!driver.version.equals(Driver.ANY)) {
+        		capabilities.setVersion(driver.version); 
+        	}
+        	if (!driver.platform.equals(Platform.ANY)) {
+        		capabilities.setPlatform(driver.platform); 
+        	}
         	
-        	/* Run selenium tests on all browsers */
+        	WebDriver webDriver = new RemoteWebDriver(new URL(System.getProperty("webdrive.remoteUrl")), capabilities);
+        	
+        	System.out.println("~ Starting tests remotely with " + constructNiceDriverName(capabilities));   
+        	
         	runTests(seleniumTests, webDriver);
-			
 		}
 		
 		File resultFile = new File(testResultRoot, "result."
@@ -216,12 +220,18 @@ public class WebDriverRunner {
 
         return !failed;
 	}
+
+	private String constructNiceDriverName(DesiredCapabilities capabilities) {
+		return capabilities.getBrowserName()
+				+ ((capabilities.getVersion() != null) ? " v" + capabilities.getVersion() : "")
+				+ ((capabilities.getPlatform() != null) ? " on " + capabilities.getPlatform().name() : "");
+	}
 	
 	
 
 	private void runTestsWithDriver(Class<?> webDriverClass, List<String> tests)
 			throws Exception {
-        System.out.println("~ Starting tests with " + webDriverClass);        	
+        System.out.println("~ Starting tests locally with " + webDriverClass);        	
     	WebDriver webDriver = (WebDriver) webDriverClass.newInstance();
     	runTests(tests, webDriver);
 	}
