@@ -187,8 +187,9 @@ public class WebDriverRunner {
 		/* Run non-selenium tests */
 //		runTestsWithDriver(HtmlUnitDriver.class, nonSeleniumTests);
 
-		String thisHost = InetAddress.getLocalHost().getHostName();
-		appUrlBase = "http://"+thisHost+":9000";
+		String thisHost = System.getProperty("webdrive.this.ipAddress");
+		String thisPort = System.getProperty("webdrive.this.port", "9000");
+		appUrlBase = "http://"+thisHost+":"+thisPort;
 		
 		System.out.println("&&&&& - Going to pass this to remote node to connect back to me: " + appUrlBase);
 

@@ -17,6 +17,7 @@
 
 import subprocess
 import urllib2
+import socket
 
 from play.utils import *
 
@@ -95,7 +96,13 @@ def test(app, args, remote):
 
     # Run WebDriverRunner
     if (remote):
+    
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("jenkins.wdstechnology.com", 80))
+        ip_address = s.getsockname()[0]
+    
         print "~~~~~~~~~~~~~~~~~~ WebDriver out of your house and running free on %s ~~~~~~~~~~ " %(app.readConf('webdrive.remoteUrl'),)
+        print "~~~~~~~~~~~~~~~~~~ ET will phone home to %s ~~~~~~~~~~ " %(ip_address,)
     else :
         print "~~~~~~~~~~~~~~~~~~ WebDriver is in your house ~~~~~~~~~~~~~~~~~~ "
 
@@ -111,6 +118,8 @@ def test(app, args, remote):
     if (remote) :
         java_cmd += ['-Dwebdrive.remoteUrl=%s' % app.readConf('webdrive.remoteUrl'),]
         java_cmd += ['-Dwebdrive.remote.browsers=%s' % app.readConf('webdrive.remote.browsers'),]
+        java_cmd += ['-Dwebdrive.this.port=%s' % app.readConf('http.port'),]
+        java_cmd += ['-Dwebdrive.this.ipAddress=%s' % ip_address,]
     
     java_cmd += ['play.modules.webdrive.WebDriverRunner',]
 
