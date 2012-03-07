@@ -30,6 +30,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.iphone.IPhoneDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
  * Manages {@link WebDriver} instances to use for testing.
@@ -46,6 +47,7 @@ public class DriverManager {
 		simpleDriverNames.put("firefox", FirefoxDriver.class);
 		simpleDriverNames.put("ie", InternetExplorerDriver.class);
 		simpleDriverNames.put("iphone", IPhoneDriver.class);
+        simpleDriverNames.put("remote", RemoteWebDriver.class);
 	}
 
 	/**

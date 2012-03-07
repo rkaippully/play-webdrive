@@ -27,6 +27,8 @@ import java.util.List;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class WebDriverRunner {
 
@@ -34,6 +36,12 @@ public class WebDriverRunner {
 	 * Default URL of the play app.
 	 */
 	private static final String DEFAULT_APP_URL = "http://localhost:9000";
+
+	/**
+	 * Default URL of the Selenium Remote; assuming a local hub but user could just
+	 * point directly at a remote.
+	 */
+	private static final String DEFAULT_REMOTE_URL = "http://localhost:4444/wd/hub";
 
 	/**
 	 * Default timeout value for each test.
@@ -143,7 +151,7 @@ public class WebDriverRunner {
 	}
 
 	private boolean run() throws Exception {
-		DriverManager manager = new DriverManager();
+	    DriverManager manager = new DriverManager();
         List<Class<?>> driverClasses = manager.getDriverClasses();
 
         /* Run non-selenium tests */
@@ -163,9 +171,18 @@ public class WebDriverRunner {
 
 	private void runTestsWithDriver(Class<?> webDriverClass, List<String> tests)
 			throws Exception {
-        System.out.println("~ Starting tests with " + webDriverClass);        	
-    	WebDriver webDriver = (WebDriver) webDriverClass.newInstance();
-    	webDriver.get(appUrlBase + "/@tests/init");
+        System.out.println("~ Starting tests with " + webDriverClass);
+        WebDriver webDriver;
+        if (webDriverClass == RemoteWebDriver.class) {
+            DesiredCapabilities capabilities = new DesiredCapabilities();
+            capabilities.setBrowserName("internet explorer");
+            capabilities.setJavascriptEnabled(true);
+            webDriver = new RemoteWebDriver(new URL(System.getProperty("webdrive.remote", DEFAULT_REMOTE_URL)), capabilities);
+        }
+        else {
+            webDriver = (WebDriver) webDriverClass.newInstance();
+        }
+        webDriver.get(appUrlBase + "/@tests/init");
         boolean ok = true;
         for (String test : tests) {
             long start = System.currentTimeMillis();
