@@ -156,7 +156,7 @@ public class WebDriverRunner {
         /* Run selenium tests on all browsers */
         for (Class<?> driverClass : driverClasses) {
             if (driverClass == RemoteWebDriver.class) {
-                URL remoteUrl = new URL(System.getProperty("webdrive.remote"));
+                URL remoteUrl = new URL(System.getProperty("webdrive.remoteUrl"));
                 for (String browser : System.getProperty("webdrive.remoteBrowsers").split(",")) {
                     Map<String, String> capabilityMap = new HashMap<String, String>();
                     capabilityMap.put("browserName", browser);
