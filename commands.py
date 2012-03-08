@@ -104,7 +104,8 @@ def test(app, args):
         cp_args = ';'.join(wdcp)    
     java_cmd = [app.java_path(), '-classpath', cp_args,
     	'-Dwebdrive.classes=%s' % app.readConf('webdrive.classes'),
-    	'-Dwebdrive.remotes=%s' % app.readConf('webdrive.remotes'),
+    	'-Dwebdrive.remote=%s' % app.readConf('webdrive.remote'),
+    	'-Dwebdrive.remoteBrowsers=%s' % app.readConf('webdrive.remoteBrowsers'),
     	'-Dwebdrive.timeout=%s' % app.readConf('webdrive.timeout'),
     	'-Dapplication.url=%s' % baseUrl,
     	'play.modules.webdrive.WebDriverRunner']
