@@ -14,7 +14,7 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-*/
+ */
 
 package play.modules.webdrive;
 
@@ -36,52 +36,64 @@ import org.openqa.selenium.iphone.IPhoneDriver;
  */
 public class DriverManager {
 
-	/* Drivers can be specified with their simple names - ie, firefox, etc */
-	private static final Map<String, Class<? extends WebDriver>> simpleDriverNames =
-		new HashMap<String, Class<? extends WebDriver>>();
-	static {
-		simpleDriverNames.put("htmlunit", HtmlUnitDriver.class);
-		simpleDriverNames.put("android", AndroidDriver.class);
-		simpleDriverNames.put("chrome", ChromeDriver.class);
-		simpleDriverNames.put("firefox", FirefoxDriver.class);
-		simpleDriverNames.put("ie", InternetExplorerDriver.class);
-		simpleDriverNames.put("iphone", IPhoneDriver.class);
+    /* Drivers can be specified with their simple names - ie, firefox, etc */
+    private static final Map<String, Class<? extends WebDriver>> simpleDriverNames = new HashMap<String, Class<? extends WebDriver>>();
+    static {
+	simpleDriverNames.put("htmlunit", HtmlUnitDriver.class);
+	simpleDriverNames.put("android", AndroidDriver.class);
+	simpleDriverNames.put("chrome", ChromeDriver.class);
+	simpleDriverNames.put("firefox", FirefoxDriver.class);
+	simpleDriverNames.put("ie", InternetExplorerDriver.class);
+	simpleDriverNames.put("iphone", IPhoneDriver.class);
+    }
+
+    /**
+     * Returns the list of all {@link WebDriver} classes to run tests.
+     */
+    public List<Class<?>> getDriverClasses() {
+	List<Class<?>> drivers = new ArrayList<Class<?>>();
+	String driversProp = System.getProperty("webdrive.classes");
+	if (driversProp == null || driversProp.trim().isEmpty()) {
+	    return drivers;
 	}
 
-	/**
-	 * Returns the list of all {@link WebDriver} classes to run tests.
-	 */
-	public List<Class<?>> getDriverClasses() {
-		List<Class<?>> drivers = new ArrayList<Class<?>>();
-		String driversProp = System.getProperty("webdrive.classes");
-		if (driversProp == null || driversProp.trim().isEmpty()) {
-			return drivers;
+	for (String driver : driversProp.split(",")) {
+	    Class<?> clazz;
+	    try {
+		clazz = Class.forName(driver);
+	    } catch (ClassNotFoundException e) {
+		clazz = simpleDriverNames.get(driver);
+	    }
+
+	    if (clazz == null || !WebDriver.class.isAssignableFrom(clazz)) {
+		System.out.println("~ " + driver
+			+ " is not a valid WebDriver implementation.");
+		continue;
+	    }
+
+	    /* Skip IE if we are not on windows */
+	    if (InternetExplorerDriver.class.equals(clazz)
+		    && !System.getProperty("os.name").startsWith("Windows")) {
+		System.out.println("~ Cannot test with IE on "
+			+ System.getProperty("os.name"));
+		continue;
+	    } else if (ChromeDriver.class.equals(clazz)) {
+
+		String path = System.getProperty("webdrive.chrome.driver.path");
+		if (path == null) {
+		    // use default path
+		    OsConfig os = OsConfig.getValueFromName(System
+			    .getProperty("os.name"));
+		    if (os != null) {
+			path = os.getChromeDriverDefaultPath();
+		    }
 		}
+		System.out.println("~ Chrome driver path = " + path);
+		System.setProperty("webdriver.chrome.driver", path);
+	    }
 
-		for (String driver : driversProp.split(",")) {
-			Class<?> clazz;
-			try {
-				clazz = Class.forName(driver);
-			} catch (ClassNotFoundException e) {
-				clazz = simpleDriverNames.get(driver);
-			}
-
-			if (clazz == null || !WebDriver.class.isAssignableFrom(clazz)) {
-				System.out.println("~ " + driver +
-					" is not a valid WebDriver implementation.");
-				continue;
-			}
-
-			/* Skip IE if we are not on windows */
-			if (InternetExplorerDriver.class.equals(clazz) &&
-				!System.getProperty("os.name").startsWith("Windows")) {
-				System.out.println("~ Cannot test with IE on " +
-					System.getProperty("os.name"));
-				continue;
-			}
-
-			drivers.add(clazz);
-		}
-		return drivers;
+	    drivers.add(clazz);
 	}
+	return drivers;
+    }
 }

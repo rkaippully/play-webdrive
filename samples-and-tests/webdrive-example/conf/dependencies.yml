@@ -1,0 +1,6 @@
+# Application dependencies
+
+require:
+    - play
+    - play -> webdrive 0.2:
+        transitive: false

@@ -1,0 +1,68 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+
+#{extends 'main.html' /}
+
+<h1>Play! Webdrive Example</h1>
+
+<fieldset>
+<legend>Create a User</legend>
+#{form @Application.save()}
+  	<div class="form-field">
+		<p>
+		  <label>&{'user.enabled'}</label>
+          <input type="checkbox" name="user_enabled" value="true"#{if user.enabled} checked="true"#{/if}" />
+		</p>
+	</div>
+	<div class="form-field">
+		<p>
+		  <label>&{'user.username'}</label>
+		  <input type="text"  id="user_username" name="user.username" value="${user.username}">
+
+		</p>
+	  </div>
+	<div class="form-field">
+		<p>
+		  <label>&{'user.name'}</label>
+		  <input type="text"  id="use_name" name="user.name" value="${user.name}">
+		</p>
+	  </div>
+	<div class="form-field">
+		<p>
+		  <label>&{'user.givenName'}</label>
+		  <input type="text" id="user_givenName" name="user.givenName" value="${user.givenName}">
+		</p>
+	  </div>
+	<div class="form-field">
+		<p>
+		  <label>&{'user.email'}</label>
+		  <input type="text" id="user_email" name="user.email" value="${user.email}">
+		</p>
+	</div>
+    <div class="form-field">
+    <p>
+      <label>&{'user.role'}</label>
+      <select id="user_role" name="user.role">
+         <option value="admin">&{'role.admin'}</option>
+         <option value="user">&{'role.user'}</option>
+       </select>
+    </p>
+  </div>
+  
+    
+   <div class="form-field">
+    <p>
+      <label>&{'user.details'}</label>
+      <textarea id="user_details'" name="user.details" >${user.details}</textarea>
+    </p>
+  </div>
+  
+	<p>
+  
+		<input type="submit" value='Create User'>
+	</p>
+#{/form}
+</fieldset>
+
+
+<a href="https://github.com/rkaippully/play-webdrive"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://assets1.github.com/img/7afbc8b248c68eb468279e8c17986ad46549fb71?repo=&url=http%3A%2F%2Fs3.amazonaws.com%2Fgithub%2Fribbons%2Fforkme_right_darkblue_121621.png&path=" alt="Fork me on GitHub"></a>

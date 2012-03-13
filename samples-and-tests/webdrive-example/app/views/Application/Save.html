@@ -1,0 +1,61 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+
+#{extends 'main.html' /}
+
+<h1>Play! Webdrive Example</h1>
+
+<div id="go-back-link"><a href="@{Application.index()}">&{'goback'}</a></div>
+<fieldset>
+<legend>User created !!!</legend>
+  	<div class="form-field">
+		<p>
+		  <label>&{'user.enabled'}</label>
+          <span> ${user.enabled}</span>
+		</p>
+	</div>
+	<div class="form-field">
+		<p>
+		  <label>&{'user.username'}</label>
+          <span>${user.username}</span
+		</p>
+	  </div>
+	<div class="form-field">
+		<p>
+		  <label>&{'user.name'}</label>
+          <span>${user.name}</span
+		</p>
+	  </div>
+	<div class="form-field">
+		<p>
+		  <label>&{'user.givenName'}</label>
+          <span>${user.givenName}</span
+		</p>
+	  </div>
+	<div class="form-field">
+		<p>
+		  <label>&{'user.email'}</label>
+          <span>${user.email}</span>
+		</p>
+	</div>
+    <div class="form-field">
+    <p>
+      <label>&{'user.role'}</label>
+       <span>${user.role}</span>
+    </p>
+  </div>
+  
+    
+   <div class="form-field">
+    <p>
+      <label>&{'user.details'}</label>
+      <span>${user.details}</span>
+    </p>
+  </div>
+
+</fieldset>
+
+
+
+
+<a href="https://github.com/rkaippully/play-webdrive"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://assets1.github.com/img/7afbc8b248c68eb468279e8c17986ad46549fb71?repo=&url=http%3A%2F%2Fs3.amazonaws.com%2Fgithub%2Fribbons%2Fforkme_right_darkblue_121621.png&path=" alt="Fork me on GitHub"></a>
