@@ -203,28 +203,35 @@ public class WebDriverRunner {
 						+ appUrlBase + "&test=/@tests/" + test
 						+ ".suite&auto=true&resultsUrl=/@tests/" + test;
             }
-            webDriver.get(url);
-            int retry = 0;
-            while(retry < testTimeoutInSeconds) {
-				if (new File(testResultRoot, test.replace("/", ".")
-						+ ".passed.html").exists()) {
-                    System.out.print("PASSED      ");
-                    break;
-				} else if (new File(testResultRoot, test.replace("/", ".")
-						+ ".failed.html").exists()) {
-                    System.out.print("FAILED   !  ");
-                    ok = false;
-                    break;
-                } else {
-                	retry++;
-                    if(retry == testTimeoutInSeconds) {
-                        System.out.print("TIMEOUT  ?  ");
+            try {
+                webDriver.get(url);
+                int retry = 0;
+                while (retry < testTimeoutInSeconds) {
+                    if (new File(testResultRoot, test.replace("/", ".") + ".passed.html").exists()) {
+                        System.out.print("PASSED      ");
+                        break;
+                    }
+                    else if (new File(testResultRoot, test.replace("/", ".") + ".failed.html").exists()) {
+                        System.out.print("FAILED   !  ");
                         ok = false;
                         break;
-                    } else {
-                        Thread.sleep(1000);
+                    }
+                    else {
+                        retry++;
+                        if (retry == testTimeoutInSeconds) {
+                            System.out.print("TIMEOUT  ?  ");
+                            ok = false;
+                            break;
+                        }
+                        else {
+                            Thread.sleep(1000);
+                        }
                     }
                 }
+            }
+            catch (Exception e) {
+                System.out.println("EXCEPTION: " + e);
+                ok = false;
             }
 
             //
