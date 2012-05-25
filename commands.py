@@ -50,18 +50,23 @@ def test(app, args):
         shutil.rmtree(os.path.join(app.path, 'tmp'))
     print "~"
 
+    # Determine application.url
+    baseUrl = app.readConf('application.baseUrl')
+    if not baseUrl:
+        http_port = 9000
+        protocol = 'http'
+        if app.readConf('https.port'):
+            http_port = app.readConf('https.port')
+            protocol = 'https'
+        else:
+            http_port = app.readConf('http.port')
+        baseUrl = '%s://localhost:%s' % (protocol, http_port)
+
     # Kill if exists
-    http_port = 9000
-    protocol = 'http'
-    if app.readConf('https.port'):
-        http_port = app.readConf('https.port')
-        protocol = 'https'
-    else:
-        http_port = app.readConf('http.port')
     try:
         proxy_handler = urllib2.ProxyHandler({})
         opener = urllib2.build_opener(proxy_handler)
-        opener.open('http://localhost:%s/@kill' % http_port)
+        opener.open('%s/@kill' % baseUrl)
     except Exception, e:
         pass
 
@@ -99,8 +104,10 @@ def test(app, args):
         cp_args = ';'.join(wdcp)    
     java_cmd = [app.java_path(), '-classpath', cp_args,
     	'-Dwebdrive.classes=%s' % app.readConf('webdrive.classes'),
+    	'-Dwebdrive.remoteUrl=%s' % app.readConf('webdrive.remoteUrl'),
+    	'-Dwebdrive.remoteBrowsers=%s' % app.readConf('webdrive.remoteBrowsers'),
     	'-Dwebdrive.timeout=%s' % app.readConf('webdrive.timeout'),
-    	'-Dapplication.url=%s://localhost:%s' % (protocol, http_port),
+    	'-Dapplication.url=%s' % baseUrl,
     	'play.modules.webdrive.WebDriverRunner']
     try:
         subprocess.call(java_cmd, env=os.environ)
@@ -111,11 +118,10 @@ def test(app, args):
     print "~"
 
     # Kill if exists
-    http_port = app.readConf('http.port')
     try:
         proxy_handler = urllib2.ProxyHandler({})
         opener = urllib2.build_opener(proxy_handler)
-        opener.open('%s://localhost:%s/@kill' % (protocol, http_port))
+        opener.open('%s/@kill' % baseUrl)
     except Exception, e:
         pass
  

@@ -23,10 +23,14 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class WebDriverRunner {
 
@@ -143,15 +147,26 @@ public class WebDriverRunner {
 	}
 
 	private boolean run() throws Exception {
-		DriverManager manager = new DriverManager();
+	    DriverManager manager = new DriverManager();
         List<Class<?>> driverClasses = manager.getDriverClasses();
 
         /* Run non-selenium tests */
-    	runTestsWithDriver(HtmlUnitDriver.class, nonSeleniumTests);
+    	runTestsWithDriver(new HtmlUnitDriver(), nonSeleniumTests);
 
-    	/* Run selenium tests on all browsers */
-    	for (Class<?> driverClass : driverClasses) {
-        	runTestsWithDriver(driverClass, seleniumTests);
+        /* Run selenium tests on all browsers */
+        for (Class<?> driverClass : driverClasses) {
+            if (driverClass == RemoteWebDriver.class) {
+                URL remoteUrl = new URL(System.getProperty("webdrive.remoteUrl"));
+                for (String browser : System.getProperty("webdrive.remoteBrowsers").split(",")) {
+                    Map<String, String> capabilityMap = new HashMap<String, String>();
+                    capabilityMap.put("browserName", browser);
+                    runTestsWithDriver(new RemoteWebDriver(remoteUrl, new DesiredCapabilities(capabilityMap)),
+                            seleniumTests);
+                }
+            }
+            else {
+                runTestsWithDriver((WebDriver) driverClass.newInstance(), seleniumTests);
+            }
         }
 
 		File resultFile = new File(testResultRoot, "result."
@@ -161,11 +176,14 @@ public class WebDriverRunner {
         return !failed;
     }
 
-	private void runTestsWithDriver(Class<?> webDriverClass, List<String> tests)
+	private void runTestsWithDriver(WebDriver webDriver, List<String> tests)
 			throws Exception {
-        System.out.println("~ Starting tests with " + webDriverClass);        	
-    	WebDriver webDriver = (WebDriver) webDriverClass.newInstance();
-    	webDriver.get(appUrlBase + "/@tests/init");
+	    String webDriverDescription = webDriver.getClass().getSimpleName();
+        if(webDriver instanceof RemoteWebDriver) {
+            webDriverDescription += " using " + ((RemoteWebDriver) webDriver).getCapabilities().getBrowserName();
+        }
+        System.out.println("~ Starting tests with " + webDriverDescription);
+        webDriver.get(appUrlBase + "/@tests/init");
         boolean ok = true;
         for (String test : tests) {
             long start = System.currentTimeMillis();
@@ -185,28 +203,35 @@ public class WebDriverRunner {
 						+ appUrlBase + "&test=/@tests/" + test
 						+ ".suite&auto=true&resultsUrl=/@tests/" + test;
             }
-            webDriver.get(url);
-            int retry = 0;
-            while(retry < testTimeoutInSeconds) {
-				if (new File(testResultRoot, test.replace("/", ".")
-						+ ".passed.html").exists()) {
-                    System.out.print("PASSED      ");
-                    break;
-				} else if (new File(testResultRoot, test.replace("/", ".")
-						+ ".failed.html").exists()) {
-                    System.out.print("FAILED   !  ");
-                    ok = false;
-                    break;
-                } else {
-                	retry++;
-                    if(retry == testTimeoutInSeconds) {
-                        System.out.print("TIMEOUT  ?  ");
+            try {
+                webDriver.get(url);
+                int retry = 0;
+                while (retry < testTimeoutInSeconds) {
+                    if (new File(testResultRoot, test.replace("/", ".") + ".passed.html").exists()) {
+                        System.out.print("PASSED      ");
+                        break;
+                    }
+                    else if (new File(testResultRoot, test.replace("/", ".") + ".failed.html").exists()) {
+                        System.out.print("FAILED   !  ");
                         ok = false;
                         break;
-                    } else {
-                        Thread.sleep(1000);
+                    }
+                    else {
+                        retry++;
+                        if (retry == testTimeoutInSeconds) {
+                            System.out.print("TIMEOUT  ?  ");
+                            ok = false;
+                            break;
+                        }
+                        else {
+                            Thread.sleep(1000);
+                        }
                     }
                 }
+            }
+            catch (Exception e) {
+                System.out.println("EXCEPTION: " + e);
+                ok = false;
             }
 
             //
