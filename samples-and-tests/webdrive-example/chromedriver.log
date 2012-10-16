@@ -1,0 +1,88 @@
+[0.001][INFO]:      ChromeDriver 18.0.1022.0 C:\Users\alexandre\AppData\Local\Google\Chrome\Application\chromedriver.exe
+[0.953][FINE]:      Initializing session with capabilities {
+   "browserName": "chrome",
+   "chrome.switches": [  ],
+   "chromeOptions": {
+      "args": [  ],
+      "extensions": [  ]
+   },
+   "platform": "ANY",
+   "version": ""
+}
+
+[0.954][INFO]:      Launching chrome: "C:\Users\alexandre\AppData\Local\Google\Chrome\Application\chrome.exe" --disable-hang-monitor --disable-prompt-on-repost --dom-automation --full-memory-crash-report --no-default-browser-check --no-first-run --ignore-certificate-errors --homepage=about:blank
+[1.852][INFO]:      Connected to Chrome successfully. Version: 17.0.963.78
+[1.937][FINE]:      Command received (/session/a6ca5f88bc72f044a2cfcc108f47d758)
+[1.937][FINE]:      Command finished (/session/a6ca5f88bc72f044a2cfcc108f47d758) with response {
+   "sessionId": "a6ca5f88bc72f044a2cfcc108f47d758",
+   "status": 0,
+   "value": {
+      "acceptSslCerts": false,
+      "applicationCacheEnabled": false,
+      "browserConnectionEnabled": false,
+      "browserName": "chrome",
+      "chrome.chromedriverVersion": "18.0.1022.0",
+      "chrome.nativeEvents": false,
+      "cssSelectorsEnabled": true,
+      "databaseEnabled": false,
+      "handlesAlerts": true,
+      "javascriptEnabled": true,
+      "locationContextEnabled": false,
+      "nativeEvents": true,
+      "platform": "windows",
+      "rotatable": false,
+      "takesScreenshot": true,
+      "version": "17.0.963.78",
+      "webStorageEnabled": false
+   }
+}
+
+[1.940][FINE]:      Command received (/session/a6ca5f88bc72f044a2cfcc108f47d758/url) with params {
+   "url": "http://localhost:9000/@tests/init"
+}
+
+[1.940][FINER]:     Waiting for all views to stop loading...
+[1.940][FINER]:     Done waiting for all views to stop loading
+[2.778][FINER]:     Waiting for all views to stop loading...
+[2.780][FINER]:     Done waiting for all views to stop loading
+[2.780][FINE]:      Command finished (/session/a6ca5f88bc72f044a2cfcc108f47d758/url) with response {
+   "sessionId": "a6ca5f88bc72f044a2cfcc108f47d758",
+   "status": 0,
+   "value": {
+
+   }
+}
+
+[2.784][FINE]:      Command received (/session/a6ca5f88bc72f044a2cfcc108f47d758/url) with params {
+   "url": "http://localhost:9000/public/test-run..."
+}
+
+[2.784][FINER]:     Waiting for all views to stop loading...
+[2.784][FINER]:     Done waiting for all views to stop loading
+[3.151][FINER]:     Waiting for all views to stop loading...
+[3.153][FINER]:     Done waiting for all views to stop loading
+[3.153][FINE]:      Command finished (/session/a6ca5f88bc72f044a2cfcc108f47d758/url) with response {
+   "sessionId": "a6ca5f88bc72f044a2cfcc108f47d758",
+   "status": 0,
+   "value": {
+
+   }
+}
+
+[6.158][FINE]:      Command received (/session/a6ca5f88bc72f044a2cfcc108f47d758/url) with params {
+   "url": "http://localhost:9000/@tests/end?resu..."
+}
+
+[6.158][FINER]:     Waiting for all views to stop loading...
+[6.159][FINER]:     Done waiting for all views to stop loading
+[6.187][FINER]:     Waiting for all views to stop loading...
+[6.192][FINER]:     Done waiting for all views to stop loading
+[6.192][FINE]:      Command finished (/session/a6ca5f88bc72f044a2cfcc108f47d758/url) with response {
+   "sessionId": "a6ca5f88bc72f044a2cfcc108f47d758",
+   "status": 0,
+   "value": {
+
+   }
+}
+
+[6.194][FINE]:      Command received (/session/a6ca5f88bc72f044a2cfcc108f47d758)
