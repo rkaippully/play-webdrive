@@ -1,3 +1,9 @@
 dist
 tmp
 lib
+.classpath
+.project
+.settings/
+eclipse/
+conf/application.conf
+conf/routes
