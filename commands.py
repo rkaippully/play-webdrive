@@ -17,10 +17,11 @@
 
 import subprocess
 import urllib2
+import socket
 
 from play.utils import *
 
-COMMANDS = [ 'webdrive:test' ]
+COMMANDS = [ 'webdrive:test' , 'webdrive:remote' ]
 
 HELP = {
     'webdrive:test': 'Run tests using Selenium 2 WebDriver'
@@ -32,9 +33,12 @@ def execute(**kargs):
     args = kargs.get("args")
 
     if command == 'webdrive:test':
-        test(app, args)
+        test(app, args, False)
+        
+    if command == 'webdrive:remote':
+        test(app, args, True)
 
-def test(app, args):
+def test(app, args, remote):
     app.check()
 
     # If framework-id is not a valid test-id, force it to 'test'
@@ -91,7 +95,16 @@ def test(app, args):
                 break
 
     # Run WebDriverRunner
-    print "~"
+    if (remote):
+    
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("jenkins.wdstechnology.com", 80))
+        ip_address = s.getsockname()[0]
+    
+        print "~~~~~~~~~~~~~~~~~~ WebDriver out of your house and running free on %s ~~~~~~~~~~ " %(app.readConf('webdrive.remoteUrl'),)
+        print "~~~~~~~~~~~~~~~~~~ ET will phone home to %s ~~~~~~~~~~ " %(ip_address,)
+    else :
+        print "~~~~~~~~~~~~~~~~~~ WebDriver is in your house ~~~~~~~~~~~~~~~~~~ "
 
     wdcp = app.getClasspath()
     cp_args = ':'.join(wdcp)
@@ -99,9 +112,18 @@ def test(app, args):
         cp_args = ';'.join(wdcp)    
     java_cmd = [app.java_path(), '-classpath', cp_args,
     	'-Dwebdrive.classes=%s' % app.readConf('webdrive.classes'),
-    	'-Dwebdrive.timeout=%s' % app.readConf('webdrive.timeout'),
-    	'-Dapplication.url=%s://localhost:%s' % (protocol, http_port),
-    	'play.modules.webdrive.WebDriverRunner']
+    	'-Dwebdrive.timeout=%s' % app.readConf('webdrive.timeout'), 
+    	'-Dapplication.url=%s://localhost:%s' % (protocol, http_port),]
+    	
+    if (remote) :
+        java_cmd += ['-Dwebdrive.remoteUrl=%s' % app.readConf('webdrive.remoteUrl'),]
+        java_cmd += ['-Dwebdrive.remote.browsers=%s' % app.readConf('webdrive.remote.browsers'),]
+        java_cmd += ['-Dwebdrive.this.port=%s' % app.readConf('http.port'),]
+        java_cmd += ['-Dwebdrive.this.ipAddress=%s' % ip_address,]
+    
+    java_cmd += ['play.modules.webdrive.WebDriverRunner',]
+
+   
     try:
         subprocess.call(java_cmd, env=os.environ)
     except OSError:
@@ -127,3 +149,4 @@ def test(app, args):
         print "~ Some tests have failed. See file://%s for results" % test_result
         print "~"
         sys.exit(1)
+        

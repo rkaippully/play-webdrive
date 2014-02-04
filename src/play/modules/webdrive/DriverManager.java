@@ -47,11 +47,24 @@ public class DriverManager {
 		simpleDriverNames.put("ie", InternetExplorerDriver.class);
 		simpleDriverNames.put("iphone", IPhoneDriver.class);
 	}
+	
+	public List<Driver> getRemoteDriverNames() {
+		List<Driver> drivers = new ArrayList<Driver>();
+		String driversProp = System.getProperty("webdrive.remote.browsers");
+		if (driversProp == null || driversProp.trim().isEmpty()) {
+			return drivers;
+		}
+		
+		for (String rawDriver : driversProp.split(",")) {
+			drivers.add(new Driver(rawDriver.split(":")));
+		}
+		return drivers;
+	}
 
 	/**
 	 * Returns the list of all {@link WebDriver} classes to run tests.
 	 */
-	public List<Class<?>> getDriverClasses() {
+	public List<Class<?>> getLocalDriverClasses() {
 		List<Class<?>> drivers = new ArrayList<Class<?>>();
 		String driversProp = System.getProperty("webdrive.classes");
 		if (driversProp == null || driversProp.trim().isEmpty()) {
